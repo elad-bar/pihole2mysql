@@ -14,7 +14,7 @@ ENV DEBUG false
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache nano && \
-    pip install mysql-connector-python mysqlclient
+    pip install mysql-connector-python
 
 COPY . /app/
 

@@ -25,7 +25,7 @@ class PiHoleDBManager:
     def __init__(self, config_data: ConfigData, load_queue: queue.Queue, query_id: Optional[int] = 0):
         self.load_queue = load_queue
         self.total_queries = None
-        self.last_query_id = query_id
+        self.last_query_id = 0 if query_id is None else query_id
         self.config_data = config_data
 
         self._timer_update_counter: Optional[Timer] = None
@@ -101,6 +101,8 @@ class PiHoleDBManager:
             query_cmd = query_cmd.replace(PLACEHOLDER_QUERY_ID, str(self.last_query_id))
             query_cmd = query_cmd.replace(PLACEHOLDER_LIMIT, str(self.config_data.pihole_enrich_batch_size))
 
+            _LOGGER.debug(f"Enrich query: {query_cmd}")
+
             queries = cursor.execute(query_cmd).fetchall()
 
         except Exception as ex:
@@ -115,7 +117,7 @@ class PiHoleDBManager:
             "enriched": completed
         }
 
-        if len(queries) > 0:
+        if queries is not None and len(queries) > 0:
             self._transform(queries, timing)
 
     def _transform(self, queries: [], timing: dict):

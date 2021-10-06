@@ -11,8 +11,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 loop = asyncio.get_event_loop()
-mysql_manager: MySQLDBManager = Optional[MySQLDBManager]
-pihole_manager: PiHoleDBManager = Optional[PiHoleDBManager]
+mysql_manager: Optional[MySQLDBManager] = None
+pihole_manager: Optional[PiHoleDBManager] = None
 
 try:
 

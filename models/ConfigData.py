@@ -13,8 +13,8 @@ class ConfigData:
     mysql_table: str
     pihole_db_path: str
     pihole_enrich_batch_size: int
-    pihole_enrich_cycle_interval: int
-    pihole_counter_cycle_interval: int
+    pihole_enrich_cycle_interval: float
+    pihole_counter_cycle_interval: float
     is_debug: bool
 
     def __init__(self):
@@ -31,9 +31,9 @@ class ConfigData:
 
         self.is_debug = str(debug).lower() == str(True).lower()
 
-        self.pihole_enrich_batch_size = self.get_config_item("PIHOLE_ENRICH_BATCH_SIZE", 75000)
-        self.pihole_enrich_cycle_interval = self.get_config_item("PIHOLE_ENRICH_CYCLE_INTERVAL", 60)
-        self.pihole_counter_cycle_interval = self.get_config_item("PIHOLE_COUNTER_CYCLE_INTERVAL", 60)
+        self.pihole_enrich_batch_size = int(self.get_config_item("PIHOLE_ENRICH_BATCH_SIZE", 75000))
+        self.pihole_enrich_cycle_interval = float(self.get_config_item("PIHOLE_ENRICH_CYCLE_INTERVAL", 60))
+        self.pihole_counter_cycle_interval = float(self.get_config_item("PIHOLE_COUNTER_CYCLE_INTERVAL", 60))
 
         log_level = logging.INFO
 

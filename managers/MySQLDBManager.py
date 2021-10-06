@@ -123,7 +123,7 @@ class MySQLDBManager:
         cursor = self._connection.cursor()
 
         select_last_query_command = SQL_MIGRATION_TABLE_MAX_QUERY_ID
-        select_last_query_command.replace(PLACEHOLDER_TABLE, self.config_data.mysql_table)
+        select_last_query_command = select_last_query_command.replace(PLACEHOLDER_TABLE, self.config_data.mysql_table)
 
         cursor.execute(select_last_query_command)
 
@@ -132,7 +132,7 @@ class MySQLDBManager:
                 self.last_query_id = item[0]
 
         select_count_command = SQL_MIGRATION_TABLE_COUNT
-        select_count_command.replace(PLACEHOLDER_TABLE, self.config_data.mysql_table)
+        select_count_command = select_count_command.replace(PLACEHOLDER_TABLE, self.config_data.mysql_table)
 
         cursor.execute(select_count_command)
         for item in cursor:
