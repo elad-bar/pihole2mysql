@@ -16,6 +16,7 @@ class ConfigData:
     pihole_enrich_cycle_interval: float
     pihole_counter_cycle_interval: float
     is_debug: bool
+    is_back_filling: bool
 
     def __init__(self):
         self._config = self._get_config_data()
@@ -30,6 +31,7 @@ class ConfigData:
         debug = self.get_config_item("DEBUG", False)
 
         self.is_debug = str(debug).lower() == str(True).lower()
+        self.is_back_filling = True
 
         self.pihole_enrich_batch_size = int(self.get_config_item("PIHOLE_ENRICH_BATCH_SIZE", 75000))
         self.pihole_enrich_cycle_interval = float(self.get_config_item("PIHOLE_ENRICH_CYCLE_INTERVAL", 60))

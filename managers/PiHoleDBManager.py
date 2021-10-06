@@ -88,7 +88,11 @@ class PiHoleDBManager:
         if is_connected and self._running:
             self._enrich_data(cursor)
 
-            self._enrich_load_data = Timer(self.config_data.pihole_enrich_cycle_interval,
+            config_interval = self.config_data.pihole_enrich_cycle_interval
+
+            wait_interval = 0.1 if self.config_data.is_back_filling else config_interval
+
+            self._enrich_load_data = Timer(wait_interval,
                                            self._enrich_data_thread)
             self._enrich_load_data.start()
 
@@ -118,6 +122,14 @@ class PiHoleDBManager:
         }
 
         if queries is not None and len(queries) > 0:
+            is_back_filling = self.config_data.is_back_filling
+            batch_size = self.config_data.pihole_enrich_batch_size
+
+            if is_back_filling and batch_size > len(queries):
+                _LOGGER.info("Switch to migration mode")
+
+                self.config_data.is_back_filling = False
+
             self._transform(queries, timing)
 
     def _transform(self, queries: [], timing: dict):

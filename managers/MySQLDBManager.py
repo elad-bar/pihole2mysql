@@ -81,13 +81,14 @@ class MySQLDBManager:
             item = self.load_queue.get()
 
             items = item.get("items", [])
+            items_count = 0 if items is None else len(items)
             count = item.get("count", 0)
             timing = item.get("timing", {})
 
-            if items is not None and len(items) > 0 and self._running:
+            if items_count > 0 and self._running:
                 self._load_data(items)
 
-                self._update_statistics(count, timing, len(items))
+                self._update_statistics(count, timing, items_count)
 
                 self.load_queue.task_done()
 
@@ -198,8 +199,10 @@ class MySQLDBManager:
 
                 progress_str = f" - {progress:.3%} [{millify(self.total_queries, 3)}/{millify(count, 3)}]"
 
+            operation = "back-filled" if self.config_data.is_back_filling else "migrated"
+
             _LOGGER.info(
-                f"{millify(migrated)} queries migrated at {millify(batch_rate, 3)}/s{progress_str}, "
+                f"{millify(migrated)} queries {operation} at {millify(batch_rate, 3)}/s{progress_str}, "
                 f"Duration: {timing_str}"
             )
 
