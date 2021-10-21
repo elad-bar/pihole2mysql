@@ -19,14 +19,14 @@ _LOGGER = logging.getLogger(__name__)
 
 class MySQLDBManager:
     config_data: ConfigData
-    last_query_id: Optional[int]
+    last_query_timestamp: Optional[int]
     total_queries: Optional[int]
     load_queue: queue.Queue
 
     def __init__(self, config_data: ConfigData):
         self.load_queue = queue.Queue()
         self.total_queries = None
-        self.last_query_id = None
+        self.last_query_timestamp = None
         self.config_data = config_data
 
         self._insert_command = self._get_insert_command()
@@ -130,7 +130,7 @@ class MySQLDBManager:
 
         for item in cursor:
             if item is not None and item[0] is not None:
-                self.last_query_id = item[0]
+                self.last_query_timestamp = item[0].timestamp()
 
         select_count_command = SQL_MIGRATION_TABLE_COUNT
         select_count_command = select_count_command.replace(PLACEHOLDER_TABLE, self.config_data.mysql_table)

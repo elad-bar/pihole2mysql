@@ -89,7 +89,7 @@ PIHOLE_LOAD_QUERY = (
     "   ON "
     "       na.ip = q.client "
     "WHERE "
-    f"   q.id > {PLACEHOLDER_QUERY_ID} "
+    f"   q.timestamp > {PLACEHOLDER_QUERY_ID} "
     "ORDER BY q.id "
     f"LIMIT {PLACEHOLDER_LIMIT};"
 )
@@ -109,6 +109,6 @@ SQL_MIGRATION_TABLE_COUNT = (
 )
 
 SQL_MIGRATION_TABLE_MAX_QUERY_ID = (
-    f"SELECT MAX(query_id) "
+    f"SELECT MAX(query_timestamp) "
     f"FROM {PLACEHOLDER_TABLE};"
 )

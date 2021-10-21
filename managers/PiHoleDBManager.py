@@ -19,13 +19,13 @@ _LOGGER = logging.getLogger(__name__)
 class PiHoleDBManager:
     load_queue: queue.Queue
     config_data: ConfigData
-    last_query_id: int
+    last_query_timestamp: int
     total_queries: Optional[int]
 
-    def __init__(self, config_data: ConfigData, load_queue: queue.Queue, query_id: Optional[int] = 0):
+    def __init__(self, config_data: ConfigData, load_queue: queue.Queue, query_timestamp: Optional[int] = 0):
         self.load_queue = load_queue
         self.total_queries = None
-        self.last_query_id = 0 if query_id is None else query_id
+        self.last_query_timestamp = 0 if query_timestamp is None else query_timestamp
         self.config_data = config_data
 
         self._timer_update_counter: Optional[Timer] = None
@@ -102,13 +102,12 @@ class PiHoleDBManager:
 
         try:
             query_cmd = PIHOLE_LOAD_QUERY
-            query_cmd = query_cmd.replace(PLACEHOLDER_QUERY_ID, str(self.last_query_id))
+            query_cmd = query_cmd.replace(PLACEHOLDER_QUERY_ID, str(self.last_query_timestamp))
             query_cmd = query_cmd.replace(PLACEHOLDER_LIMIT, str(self.config_data.pihole_enrich_batch_size))
 
             _LOGGER.debug(f"Enrich query: {query_cmd}")
 
             queries = cursor.execute(query_cmd).fetchall()
-
         except Exception as ex:
             exc_type, exc_obj, exc_tb = sys.exc_info()
             line = exc_tb.tb_lineno
@@ -150,17 +149,17 @@ class PiHoleDBManager:
 
         if len(data_items) == len(queries):
             last_item = data_items[len(data_items) - 1]
-            last_query_id = last_item.get("query_id")
+            last_query_timestamp = last_item.get("query_id")
 
             migration_data = {
                 "count": self.total_queries,
                 "items": data_items,
-                "from": self.last_query_id,
-                "to": last_query_id,
+                "from": self.last_query_timestamp,
+                "to": last_query_timestamp,
                 "timing": timing
             }
 
-            self.last_query_id = last_query_id
+            self.last_query_timestamp = last_query_timestamp
 
             self.load_queue.put(migration_data)
 

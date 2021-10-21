@@ -21,7 +21,7 @@ try:
     mysql_manager = MySQLDBManager(config_data)
     mysql_manager.initialize()
 
-    pihole_manager = PiHoleDBManager(config_data, mysql_manager.load_queue, mysql_manager.last_query_id)
+    pihole_manager = PiHoleDBManager(config_data, mysql_manager.load_queue, mysql_manager.last_query_timestamp)
     pihole_manager.initialize()
 
     loop.run_forever()
@@ -33,6 +33,8 @@ except KeyboardInterrupt:
     _LOGGER.debug("Migration cancelled")
 
 finally:
+    _LOGGER.debug("Completed")
+
     if mysql_manager is not None:
         mysql_manager.terminate()
 
